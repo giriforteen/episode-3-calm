@@ -1247,7 +1247,11 @@
             <div class="footer-brand">FORTEEN MIND LABS</div>
             <div class="footer-copyright">
                 © 2025 <a href="https://forteen.in" class="footer-link">forteen.in</a><br>
-                Part of THE UNDERTOW series
+                Part of THE UNDERTOW series<br><br>
+                <span style="font-size: 0.85em; opacity: 0.7;">
+                    Privacy: No data is collected or stored. All interactions remain on your device.<br>
+                    Voice and sound features use your browser's built-in capabilities only.
+                </span>
             </div>
         </div>
     </div>
@@ -1294,15 +1298,6 @@
         audioElements.stream.volume = 0.15;
         audioElements.crickets.volume = 0.22;
         audioElements.birds.volume = 0.18;
-        
-        // Check if audio files can be loaded
-        console.log('Audio elements initialized:');
-        Object.entries(audioElements).forEach(([name, audio]) => {
-            console.log(`- ${name}: ${audio ? 'Found' : 'Missing'}`);
-            if (audio && audio.src) {
-                console.log(`  Source: ${audio.src}`);
-            }
-        });
         
         // ===== VOICE SYSTEM =====
         function toggleVoice() {
@@ -1351,7 +1346,6 @@
             
             // Get all available voices
             const voices = speechSynthesis.getVoices();
-            console.log('Available voices:', voices.map(v => v.name + ' (' + v.lang + ')'));
             
             // Select warm, deep English male voice with priority
             const maleVoice = voices.find(voice => 
@@ -1378,12 +1372,10 @@
                 voice.lang.startsWith('en')
             ) || voices[0]; // Fallback to first available
             
-            console.log('Selected voice:', maleVoice ? maleVoice.name : 'None (using default)');
-            
             if (maleVoice) {
                 utterance.voice = maleVoice;
             }
-            utterance.rate = 0.85; // Balanced contemplative pace
+            utterance.rate = 0.75; // Contemplative pace
             utterance.pitch = 0.85; // Deeper, warmer
             utterance.volume = 0.7; // Slightly softer
             
@@ -1399,22 +1391,14 @@
         function initializeAudio() {
             if (audioInitialized) return;
             
-            console.log('Initializing audio system...');
-            
             // Load all audio files
             Object.entries(audioElements).forEach(([name, audio]) => {
                 audio.load();
-                console.log(`Loading ${name} sound:`, audio.src);
                 
                 // Error handling
                 audio.addEventListener('error', function(e) {
                     console.error(`Error loading ${name}:`, this.src, e);
                 });
-                
-                // Success handling
-                audio.addEventListener('canplaythrough', function() {
-                    console.log(`${name} ready to play`);
-                }, { once: true });
             });
             
             audioInitialized = true;
@@ -1423,13 +1407,10 @@
         function playAudio(audioElement, fadeIn = true) {
             if (!soundEnabled) return;
             
-            console.log('Attempting to play audio:', audioElement.id);
-            
             if (fadeIn) {
                 audioElement.volume = 0;
                 audioElement.play()
                     .then(() => {
-                        console.log('Audio started successfully:', audioElement.id);
                         fadeAudioIn(audioElement);
                     })
                     .catch(e => {
@@ -1438,9 +1419,6 @@
                     });
             } else {
                 audioElement.play()
-                    .then(() => {
-                        console.log('Audio started successfully (no fade):', audioElement.id);
-                    })
                     .catch(e => {
                         console.error('Audio play error:', audioElement.id, e);
                     });
@@ -1448,7 +1426,6 @@
         }
         
         function stopAudio(audioElement, fadeOut = true) {
-            console.log('Stopping audio:', audioElement.id, 'fadeOut:', fadeOut);
             if (fadeOut) {
                 fadeAudioOut(audioElement);
             } else {
@@ -1458,7 +1435,6 @@
                 audioElement.currentTime = 0;
                 // Force the element to fully stop
                 audioElement.load();
-                console.log('Audio stopped immediately:', audioElement.id);
             }
         }
         
@@ -1517,8 +1493,6 @@
         
         function updateAudioForSegment(segmentIndex) {
             if (!soundEnabled) return;
-            
-            console.log('=== UPDATING AUDIO FOR SEGMENT', segmentIndex, '===');
             
             // Clear any active fade intervals first
             clearAllFadeIntervals();
